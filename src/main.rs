@@ -12,18 +12,18 @@ use opengl_graphics::{ GlGraphics, OpenGL };
 use opengl_graphics::glyph_cache::GlyphCache;
 use std::path::Path;
 
-const WORLD_X: usize = 30;
-const WORLD_Y: usize = 30;
-const WORLD_Z: usize = 10;
+const WORLD_X: u32 = 30;
+const WORLD_Y: u32 = 30;
+const WORLD_Z: u32 = 10;
 
-const WORLD_DIMENSIONS: [usize; 3] = [WORLD_X, WORLD_Y, WORLD_Z];
+const WORLD_DIMENSIONS: [u32; 3] = [WORLD_X, WORLD_Y, WORLD_Z];
 
 pub struct App {
     gl: GlGraphics, // OpenGL drawing backend.
-    tiles: [[[Tile; WORLD_X]; WORLD_Y]; WORLD_Z],
-    viewport: [usize; 3],
+    tiles: [[[Tile; WORLD_X as usize]; WORLD_Y as usize]; WORLD_Z as usize],
+    viewport: [u32; 3],
     screen_size_pixels: [u32; 3],
-    screen_size_tiles: [usize; 3]
+    screen_size_tiles: [u32; 3]
 }
 
 #[derive(Copy, Clone)]
@@ -88,13 +88,13 @@ impl App {
         const RED:   [f32; 4] = [1.0, 0.0, 0.0, 1.0];
         const BLACK: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
 
-        let tile_width = self.screen_size_pixels[0] / self.screen_size_tiles[0] as u32;
-        let tile_height = self.screen_size_pixels[1] / self.screen_size_tiles[1] as u32;
-        let num_x_tiles = self.screen_size_tiles[0] as u32;
-        let num_y_tiles = self.screen_size_tiles[1] as u32;
-        let view_x = self.viewport[0];
-        let view_y = self.viewport[1];
-        let view_z = self.viewport[2];
+        let tile_width = self.screen_size_pixels[0] / self.screen_size_tiles[0];
+        let tile_height = self.screen_size_pixels[1] / self.screen_size_tiles[1];
+        let num_x_tiles = self.screen_size_tiles[0];
+        let num_y_tiles = self.screen_size_tiles[1];
+        let view_x = self.viewport[0] as usize;
+        let view_y = self.viewport[1] as usize;
+        let view_z = self.viewport[2] as usize;
         let tiles = self.tiles;
         self.gl.draw(args.viewport(), |c, gl| {
             // Clear the screen.
@@ -144,15 +144,14 @@ impl App {
         }
     }
 
-    fn increment_viewport(&mut self, dimension: usize, diff: usize) {
+    fn increment_viewport(&mut self, dimension: usize, diff: u32) {
         if self.viewport[dimension] <
             WORLD_DIMENSIONS[dimension] - self.screen_size_tiles[dimension] {
-            println!("incrementing");
             self.viewport[dimension] += diff;
         }
     }
 
-    fn decrement_viewport(&mut self, dimension: usize, diff: usize) {
+    fn decrement_viewport(&mut self, dimension: usize, diff: u32) {
         if self.viewport[dimension] != 0 {
             self.viewport[dimension] -= diff;
         }
